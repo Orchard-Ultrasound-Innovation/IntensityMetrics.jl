@@ -6,11 +6,11 @@ DocMeta.setdocmeta!(IntensityMetrics, :DocTestSetup, :(using IntensityMetrics); 
 makedocs(;
     modules=[IntensityMetrics],
     authors="Morten F. Rasmussen <10264458+mofii@users.noreply.github.com> and contributors",
-    repo="https://github.com/mofii/IntensityMetrics.jl/blob/{commit}{path}#{line}",
+    repo="https://github.com/Orchard-Ultrasound-Innovation/IntensityMetrics.jl/blob/{commit}{path}#{line}",
     sitename="IntensityMetrics.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://mofii.github.io/IntensityMetrics.jl",
+        canonical="https://Orchard-Ultrasound-Innovation.github.io/IntensityMetrics.jl",
         assets=String[],
     ),
     pages=[
@@ -19,5 +19,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/mofii/IntensityMetrics.jl",
+    repo="github.com/Orchard-Ultrasound-Innovation/IntensityMetrics.jl",
+    devbranch = "main",
 )
