@@ -33,7 +33,7 @@ end
     Output unit is W/m².
 
 """
-intensity(p, M::Medium) = p^2/(M.ρ × M.c)                                              # W/m²
+intensity(p, M::Medium) = p^2/(M.ρ * M.c)                                              # W/m²
 
 """
     Isppa(p, M::Medium, E::Excitation)
@@ -41,7 +41,7 @@ intensity(p, M::Medium) = p^2/(M.ρ × M.c)                                     
     p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
     Output unit is W/cm².
 """
-Isppa(p, M::Medium, E::Excitation) = sum(intensity.(p, M)) / (E.pulse_duration × 10e4)    # W/cm²
+Isppa(p, M::Medium, E::Excitation) = map(p -> sum(intensity(p,M)) / (E.pulse_duration * 10_000), p) # W/cm²
 
 """
     Ispta(p, M::Medium, E::Excitation)
@@ -49,9 +49,8 @@ Isppa(p, M::Medium, E::Excitation) = sum(intensity.(p, M)) / (E.pulse_duration �
     p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
     Output unit is W/cm².
 """
-Ispta(p, M::Medium, E::Excitation) = Isppa(p, M::Medium, E::Excitation) × E.duty_cycle # W/cm²
+Ispta(p, M::Medium, E::Excitation) = Isppa(p, M, E) * E.duty_cycle # W/cm²
 
-PNP(p) = abs(minimum(p))                                                               # Pa
 
 """
     MI(p, E::Excitation)
@@ -59,6 +58,7 @@ PNP(p) = abs(minimum(p))                                                        
     p is expected to be a vector/time series containing the measured pressure from the excitation pulse.
     Output is dimensionless.
 """
-MI(p,E::Excitation) = PNP(p)/√(E.f0/1e6)
+MI(p,E::Excitation) = PNP(p)/√(E.f0/1_000_000)
+PNP(p) = abs(minimum(p))                                                               # Pa
 
 end
