@@ -1,7 +1,7 @@
 module IntensityMetrics
 
 export Medium, Excitation
-export intensity, Isppa, Ispta, MI
+export intensity, intensity_sppa, intensity_spta, mechanical_index, peak_np, peak_pp, peak_ptp
 
 """
 struct Medium
@@ -33,32 +33,48 @@ end
     Output unit is W/m².
 
 """
-intensity(p, M::Medium) = p^2/(M.ρ * M.c)                                              # W/m²
+intensity(p, M::Medium) = p^2/(M.ρ * M.c)    # W/m²
 
 """
-    Isppa(p, M::Medium, E::Excitation)
+    intensity_sppa(p, M::Medium, E::Excitation)
     Spatial Peak, Pulse Averaged Intensity.
     p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
     Output unit is W/cm².
 """
-Isppa(p, M::Medium, E::Excitation) = map(p -> sum(intensity(p,M)) / (E.pulse_duration * 10_000), p) # W/cm²
+intensity_sppa(p, M::Medium, E::Excitation) = mapreduce(p->intensity(p,M), +, p) / (E.pulse_duration * 10_000) # W/cm²
 
 """
-    Ispta(p, M::Medium, E::Excitation)
+    intensity_spta(p, M::Medium, E::Excitation)
     Spatial Peak, Time Averaged Intensity.
     p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
     Output unit is W/cm².
 """
-Ispta(p, M::Medium, E::Excitation) = Isppa(p, M, E) * E.duty_cycle # W/cm²
+intensity_spta(p, M::Medium, E::Excitation) = intensity_sppa(p, M, E) * E.duty_cycle # W/cm²
 
 
 """
-    MI(p, E::Excitation)
-    Mechanical Index.
+    mechanical_index(p, E::Excitation)
     p is expected to be a vector/time series containing the measured pressure from the excitation pulse.
     Output is dimensionless.
 """
-MI(p,E::Excitation) = PNP(p)/√(E.f0/1_000_000)
-PNP(p) = abs(minimum(p))                                                               # Pa
+mechanical_index(p,E::Excitation) = peak_np(p)/sqrt(E.f0/1_000_000)
+
+"""
+    peak_np(p)
+    Peak Negative Pressure.
+"""
+peak_np(p) = abs(minimum(p))            # Pa
+
+"""
+    peak_pp(p)
+    Peak Positive Pressure.
+"""
+peak_pp(p) = abs(maximum(p))            # Pa
+
+"""
+    peak_ptp(p)
+    peak pressure measured in peak-to-peak.
+"""
+peak_ptp(p) = peak_pp(p) - peak_np(p)
 
 end
