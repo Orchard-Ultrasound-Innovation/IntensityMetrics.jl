@@ -9,7 +9,7 @@ struct Medium
     c: Speed of sound in m/s
 end
 """
-struct Medium{T<:AbstractFloat}
+struct Medium{T <: AbstractFloat}
     ρ::T # density in kg/m³
     c::T # speed of sound in m/s
 end
@@ -21,7 +21,7 @@ struct Excitation
                 f0: Center frequency in Hz
 end
 """
-struct Excitation{T<:AbstractFloat}
+struct Excitation{T <: AbstractFloat}
     pulse_duration::T # seconds
     duty_cycle::T     # [0,1]
     f0::T             # Center frequency in Hz
@@ -33,7 +33,7 @@ end
     Output unit is W/m².
 
 """
-intensity(p, M::Medium) = p^2/(M.ρ * M.c)    # W/m²
+intensity(p, M::Medium) = p^2 / (M.ρ * M.c)    # W/m²
 
 """
     intensity_sppa(p, M::Medium, E::Excitation)
@@ -41,7 +41,7 @@ intensity(p, M::Medium) = p^2/(M.ρ * M.c)    # W/m²
     p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
     Output unit is W/cm².
 """
-intensity_sppa(p, M::Medium, E::Excitation) = mapreduce(p->intensity(p,M), +, p) / (E.pulse_duration * 10_000) # W/cm²
+intensity_sppa(p, M::Medium, E::Excitation) = mapreduce(p -> intensity(p, M), +, p) / (E.pulse_duration * 10_000) # W/cm²
 
 """
     intensity_spta(p, M::Medium, E::Excitation)
@@ -57,7 +57,7 @@ intensity_spta(p, M::Medium, E::Excitation) = intensity_sppa(p, M, E) * E.duty_c
     p is expected to be a vector/time series containing the measured pressure from the excitation pulse.
     Output is dimensionless.
 """
-mechanical_index(p,E::Excitation) = peak_np(p)/sqrt(E.f0/1_000_000)
+mechanical_index(p,E::Excitation) = peak_np(p) / sqrt(E.f0 / 1_000_000)
 
 """
     peak_np(p)
