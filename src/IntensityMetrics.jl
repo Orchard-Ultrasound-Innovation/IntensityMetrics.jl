@@ -52,7 +52,7 @@ Excitation(f0, pd::Number, dc) = Excitation(f0, Float64(pd), dc, 10)
 
 """
 intensity(p::Unitful.Pressure, M::Medium) = p^2 / (M.density * M.c)
-intensity(p_vec::Vector{T}, M::Medium) where {T :< Unitful.Pressure} =
+intensity(p_vec::Vector{T}, M::Medium) where {T <: Unitful.Pressure} =
     map(p_vec -> intensity(p_vec, M), p_vec)  # W/m²
 # Unitless version
 #intensity(p::T, M::Medium) where {T :< Number} = p^2 / ustrip(M.ρ * M.c)
@@ -66,7 +66,7 @@ intensity(p_vec::Vector{T}, M::Medium) where {T :< Unitful.Pressure} =
     p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
     Output unit is W/cm².
 """
-intensity_sppa(p::Vector{T}, M::Medium, E::Excitation) where {t<:Unitful.Pressure} =
+intensity_sppa(p::Vector{T}, M::Medium, E::Excitation) where {T<:Unitful.Pressure} =
     mapreduce(p -> intensity(p, M), +, p) / (E.pulse_duration * 10_000u"cm^2/m^2") # W/cm²
 # Unitless version
 #intensity_sppa(p::Vector{T}, M::Medium, E::Excitation) where {T <: Number} =
