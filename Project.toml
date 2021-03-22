@@ -1,13 +1,14 @@
 name = "IntensityMetrics"
 uuid = "d2d6fb72-71f0-4c51-b8f6-2c324c15d39c"
 authors = ["Morten F. Rasmussen <10264458+mofii@users.noreply.github.com> and contributors"]
-version = "0.2.0"
+version = "0.3.0"
 
 [deps]
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 julia = "1"
+Unitful = "1.6"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
