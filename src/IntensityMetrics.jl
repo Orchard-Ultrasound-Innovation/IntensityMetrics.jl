@@ -67,7 +67,7 @@ intensity(p_vec::Vector{T}, M::Medium) where {T <: Unitful.Pressure} =
     Output unit is W/cm².
 """
 intensity_sppa(p::Vector{T}, M::Medium, E::Excitation) where {T<:Unitful.Pressure} =
-    mapreduce(p -> intensity(p, M), +, p) / (E.pulse_duration * 10_000u"cm^2/m^2") # W/cm²
+    mapreduce(p -> intensity(p, M), +, p) * 1u"s"/(E.pulse_duration * 10_000u"cm^2/m^2") # W/cm²
 # Unitless version
 #intensity_sppa(p::Vector{T}, M::Medium, E::Excitation) where {T <: Number} =
 #    mapreduce(p -> intensity(p, M), +, p) / (ustrip(E.pulse_duration) * 10_000) # W/cm²
