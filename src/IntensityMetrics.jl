@@ -1,8 +1,10 @@
 module IntensityMetrics
 
 using Unitful
+using UnitfulRecipes
 
 export Medium, Excitation
+export IntensitySppa1D, IntensitySpta1D
 export intensity, intensity_sppa, intensity_spta, mechanical_index
 export peak_np, peak_pp, peak_ptp
 
@@ -14,7 +16,7 @@ const seconds = typeof(1.0u"s")
 const herz = typeof(1.0u"Hz")
 const pascal = typeof(1.0u"Pa")
 
-
+include("models.jl")
 
 """
 struct Medium
@@ -44,6 +46,7 @@ end
 Excitation() = Excitation(5e6u"Hz", 0.1u"s", 1.0, 10u"s")
 Excitation(f0, pd::Number, dc) = Excitation(f0, Float64(pd), dc, 10)
 
+format_intensity(i) = uconvert(u"W/m^2", i)
 
 """
     intensity(p::Unitful.Pressure, M::Medium)
@@ -51,8 +54,11 @@ Excitation(f0, pd::Number, dc) = Excitation(f0, Float64(pd), dc, 10)
     Output unit is W/m².
 
 """
-intensity(p::Unitful.Pressure, M::Medium) = p^2 / (M.density * M.c)
-intensity(p_vec::Vector{T}, M::Medium) where {T :< Unitful.Pressure} =
+function intensity(p::Unitful.Pressure, M::Medium) 
+    return format_intensity(p^2 / (M.density * M.c))
+end
+
+intensity(p_vec::Vector{T}, M::Medium) where T <: Unitful.Pressure =
     map(p_vec -> intensity(p_vec, M), p_vec)  # W/m²
 # Unitless version
 #intensity(p::T, M::Medium) where {T :< Number} = p^2 / ustrip(M.ρ * M.c)
@@ -66,8 +72,44 @@ intensity(p_vec::Vector{T}, M::Medium) where {T :< Unitful.Pressure} =
     p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
     Output unit is W/cm².
 """
-intensity_sppa(p::Vector{T}, M::Medium, E::Excitation) where {t<:Unitful.Pressure} =
-    mapreduce(p -> intensity(p, M), +, p) / (E.pulse_duration * 10_000u"cm^2/m^2") # W/cm²
+function intensity_sppa(
+    pressure::Array{T, 2}, M::Medium, E::Excitation
+) where T <:Unitful.Pressure
+    intensities = mapreduce(p -> intensity(p, M), +, pressure; dims=1)  * u"s"
+    adjusted = intensities / (E.pulse_duration * 10_000u"cm^2/m^2")
+    return IntensitySppa1D(adjusted[1, :])
+end
+
+"""
+    intensity_sppa(p::Unitful.Pressure, M::Medium, E::Excitation)
+    Spatial Peak, Pulse Averaged Intensity.
+    Spatial Peak, Pulse Averaged Intensity.
+    p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
+    Output unit is W/cm².
+"""
+function intensity_sppa(
+    pressure::Array{T, 3}, M::Medium, E::Excitation
+) where T <:Unitful.Pressure
+    intensities = mapreduce(p -> intensity(p, M), +, pressure; dims=1)  * u"s"
+    adjusted = intensities / (E.pulse_duration * 10_000u"cm^2/m^2")
+    return IntensitySppa2D(adjusted[1, :, :])
+end
+
+"""
+    intensity_sppa(p::Unitful.Pressure, M::Medium, E::Excitation)
+    Spatial Peak, Pulse Averaged Intensity.
+    Spatial Peak, Pulse Averaged Intensity.
+    p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
+    Output unit is W/cm².
+"""
+function intensity_sppa(
+    pressure::Array{T, 4}, M::Medium, E::Excitation
+) where T <: Unitful.Pressure
+    intensities = mapreduce(p -> intensity(p, M), +, pressure; dims=1)  * u"s"
+    adjusted = intensities / (E.pulse_duration * 10_000u"cm^2/m^2")
+    return IntensitySppa3D(adjusted[1, :, :, :])
+end
+
 # Unitless version
 #intensity_sppa(p::Vector{T}, M::Medium, E::Excitation) where {T <: Number} =
 #    mapreduce(p -> intensity(p, M), +, p) / (ustrip(E.pulse_duration) * 10_000) # W/cm²
@@ -78,11 +120,46 @@ intensity_sppa(p::Vector{T}, M::Medium, E::Excitation) where {t<:Unitful.Pressur
     p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
     Output unit is W/cm².
 """
-intensity_spta(
-    p::Vector{T},
+function intensity_spta(
+    p::Array{T, 2},
     M::Medium,
     E::Excitation,
-) where {T<:Union{Unitful.Pressure,Number}} = intensity_sppa(p, M, E) * E.duty_cycle # W/cm²
+) where {T<:Union{Unitful.Pressure,Number}} 
+    i = intensity_sppa(p, M, E) * E.duty_cycle # W/cm²
+    return IntensitySpta1D(i)
+end
+
+"""
+    intensity_spta(p::Unitful.Pressure, M::Medium, E::Excitation)
+    Spatial Peak, Time Averaged Intensity.
+    Spatial Peak, Time Averaged Intensity.
+    p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
+    Output unit is W/cm².
+"""
+function intensity_spta(
+    p::Array{T, 3},
+    M::Medium,
+    E::Excitation,
+) where {T<:Union{Unitful.Pressure,Number}} 
+    i = intensity_sppa(p, M, E) * E.duty_cycle # W/cm²
+    return IntensitySpta2D(i)
+end
+
+"""
+    intensity_spta(p::Unitful.Pressure, M::Medium, E::Excitation)
+    Spatial Peak, Time Averaged Intensity.
+    Spatial Peak, Time Averaged Intensity.
+    p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
+    Output unit is W/cm².
+"""
+function intensity_spta(
+    p::Array{T, 4},
+    M::Medium,
+    E::Excitation,
+) where {T<:Union{Unitful.Pressure,Number}} 
+    i = intensity_sppa(p, M, E) * E.duty_cycle # W/cm²
+    return IntensitySpta3D(i)
+end
 
 """
     energy_spta(p::Unitful.Pressure, M::Medium, E::Excitation)
