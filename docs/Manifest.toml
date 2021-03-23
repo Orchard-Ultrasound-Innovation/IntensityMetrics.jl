@@ -3,6 +3,12 @@
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
+[[ConstructionBase]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "48920211c95a6da1914a06c44ec94be70e84ffff"
+uuid = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
+version = "1.1.0"
+
 [[Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
@@ -30,9 +36,10 @@ uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
 version = "0.1.1"
 
 [[IntensityMetrics]]
+deps = ["RecipesBase", "Unitful", "UnitfulRecipes"]
 path = ".."
 uuid = "d2d6fb72-71f0-4c51-b8f6-2c324c15d39c"
-version = "0.1.0"
+version = "0.3.0"
 
 [[InteractiveUtils]]
 deps = ["Markdown"]
@@ -51,6 +58,10 @@ uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
 [[Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
+[[LinearAlgebra]]
+deps = ["Libdl"]
+uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
@@ -63,9 +74,9 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[Parsers]]
 deps = ["Dates"]
-git-tree-sha1 = "223a825cccef2228f3fdbf2ecc7ca93363059073"
+git-tree-sha1 = "c8abc88faa3f7a3950832ac5d6e690881590d6dc"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "1.0.16"
+version = "1.1.0"
 
 [[Pkg]]
 deps = ["Dates", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
@@ -82,6 +93,11 @@ uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 [[Random]]
 deps = ["Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+
+[[RecipesBase]]
+git-tree-sha1 = "b3fb709f3c97bfc6e948be68beeecb55a0b340ae"
+uuid = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
+version = "1.1.1"
 
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -102,3 +118,15 @@ uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [[Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+
+[[Unitful]]
+deps = ["ConstructionBase", "LinearAlgebra", "Random"]
+git-tree-sha1 = "fdfbea79b5b9a305bf226eb4730321f603281290"
+uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
+version = "1.6.0"
+
+[[UnitfulRecipes]]
+deps = ["RecipesBase", "Unitful"]
+git-tree-sha1 = "9ab6ecc509be83edea16f318daac2181c5fd2565"
+uuid = "42071c24-d89e-48dd-8a24-8a12d9b8861f"
+version = "1.1.0"
