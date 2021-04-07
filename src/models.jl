@@ -1,8 +1,8 @@
 const PressureArray{x} = Array{T, x} where T <: Union{Unitful.Pressure, Number}
 
-squeeze(A::PressureArray{2}) = A[1, :]
-squeeze(A::PressureArray{3}) = A[1, :, :]
-squeeze(A::PressureArray{4}) = A[1, :, :, :]
+squeeze(A) = A[1, :]
+squeeze(A) = A[1, :, :]
+squeeze(A) = A[1, :, :, :]
 
 const kg_per_m3 = typeof(1.0u"kg/m^3")
 const m_per_s = typeof(1.0u"m" / 1.0u"s")
