@@ -1,13 +1,17 @@
-const PressureArray{x} = Array{T, x} where T <: Union{Unitful.Pressure, Number}
-
-squeeze(A) = A[1, :]
-squeeze(A) = A[1, :, :]
-squeeze(A) = A[1, :, :, :]
-
+const W_per_cm2 = typeof(1.0u"W/cm^2")
 const kg_per_m3 = typeof(1.0u"kg/m^3")
 const m_per_s = typeof(1.0u"m" / 1.0u"s")
 const herz = typeof(1.0u"Hz")
 const seconds = typeof(1.0u"s")
+
+const PressureArray{x} = Array{T, x} where T <: Union{Unitful.Pressure, Number, W_per_cm2}
+
+
+squeeze(A::PressureArray{1}) = A[:]
+squeeze(A::PressureArray{2}) = A[1, :]
+squeeze(A::PressureArray{3}) = A[1, :, :]
+squeeze(A::PressureArray{4}) = A[1, :, :, :]
+
 
 
 """
@@ -20,6 +24,7 @@ struct Medium
     density::kg_per_m3 # density in kg/m³
     c::m_per_s # speed of sound in m/s
 end
+
 Medium() = Medium(1000.0u"kg/m^3", 1480.0u"m/s")
 #TODO: make a selector for 20C water and standard human tissue.
 
