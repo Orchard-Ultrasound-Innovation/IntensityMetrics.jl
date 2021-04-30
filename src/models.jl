@@ -1,9 +1,8 @@
 const W_per_cm2 = typeof(1.0u"W/cm^2")
 const kg_per_m3 = typeof(1.0u"kg/m^3")
 const m_per_s = typeof(1.0u"m" / 1.0u"s")
-const hertz = typeof(1.0u"Hz")
+const herz = typeof(1.0u"Hz")
 const seconds = typeof(1.0u"s")
-const pressure = typeof(1.0u"Pa")
 
 const PressureArray{x} = Array{T, x} where T <: Union{Unitful.Pressure, Number, W_per_cm2}
 
@@ -29,7 +28,6 @@ end
 Medium() = Medium(1000.0u"kg/m^3", 1480.0u"m/s")
 #TODO: make a selector for 20C water and standard human tissue.
 
-
 """
 struct Excitation
     pulse_duration: On-time / duration of the excitation pulse in seconds.
@@ -38,24 +36,11 @@ struct Excitation
 end
 """
 struct Excitation
-    f0::hertz                # Center frequency in Hz
+    f0::herz                # Center frequency in Hz
     pulse_duration::seconds # seconds
     duty_cycle::Float64     # [0,1]
     total_duration::seconds
 end
 
 Excitation() = Excitation(5e6u"Hz", 0.1u"s", 1.0, 10u"s")
-Excitation(f0, pd::Number, dc) = Excitation(f0, Float64(pd), dc, 10u"s")
-
-
-"""
-struct Waveform
-end
-"""
-struct Waveform
-    time::Vector{seconds}
-    pressure::Vector{pressure}
-    dt::seconds
-end
-
-Waveform(time, pressure, dt) = Waveform(time, pressure, dt)
+Excitation(f0, pd::Number, dc) = Excitation(f0, Float64(pd), dc, 10)
