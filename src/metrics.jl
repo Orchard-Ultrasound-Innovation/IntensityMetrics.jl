@@ -10,17 +10,17 @@ function intensity(p::Unitful.Pressure, M::Medium)
 end
 
 """
-    intensity_sppa(p::Unitful.Pressure, M::Medium, E::Excitation)
+    intensity_sppa(W::Waveform, M::Medium, E::Excitation)
 Spatial Peak, Pulse Averaged Intensity.
 Spatial Peak, Pulse Averaged Intensity.
 p is expected to be a vector/time series containing only the measured pressure from the excitation pulse.
 Output unit is W/cm².
 """
-function intensity_sppa(pressure, medium, excitation)
-    intensities = u"s" * mapreduce(
-        p -> intensity(p, medium), +, pressure; dims=1
+function intensity_sppa(W::Waveform, M::Medium, E::Excitation)
+    intensities_summed = mapreduce(
+        p -> intensity(p, M) * W.dt, +, W.pressure; dims=1
     ) 
-    return squeeze(intensities / (excitation.pulse_duration * 10_000u"cm^2/m^2"))
+    return intensities_summed[1] / E.pulse_duration
 end
 
 
