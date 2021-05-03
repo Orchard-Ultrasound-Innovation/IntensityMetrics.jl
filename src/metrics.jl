@@ -17,10 +17,12 @@ p is expected to be a vector/time series containing only the measured pressure f
 Output unit is W/cm².
 """
 function intensity_sppa(pressure, medium, excitation)
-    intensities = u"s" * mapreduce(
-        p -> intensity(p, medium), +, pressure; dims=1
+    # account for sampling frequency by multiplying pressure values with dt
+    dt = 1/excitation.sampling_frequency_receive
+    intensities = mapreduce(
+        p -> intensity(p, medium) * dt, +, pressure; dims=1
     ) 
-    return squeeze(intensities / (excitation.pulse_duration * 10_000u"cm^2/m^2"))
+    return uconvert.(u"W/cm^2", squeeze(intensities / excitation.pulse_duration))
 end
 
 

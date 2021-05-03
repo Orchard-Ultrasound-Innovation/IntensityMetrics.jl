@@ -6,15 +6,16 @@ using IntensityMetrics.Unitful
 @testset "perfect sinusoid" begin
     # ultrasound parameters
     center_freq = 5e6u"Hz"
-    pulse_duration = 10u"µs"
     pressure_amplitude = 1u"MPa"
     duty_cycle = 1.0
+    pulse_duration = 10u"µs"
+    total_duration = pulse_duration
+    sampling_freq_receive = 40e6u"Hz"
     M = Medium();
-    E = Excitation(center_freq, pulse_duration, duty_cycle);
+    E = Excitation(center_freq, pulse_duration, duty_cycle, total_duration, sampling_freq_receive);
 
     # waveform parameters
-    sampling_freq = 40e6u"Hz"
-    dt = 1/sampling_freq
+    dt = 1/sampling_freq_receive
     num_samples = ceil(pulse_duration/dt)
     time = collect((0:num_samples-1)*dt)
     data = sin.(2*pi*center_freq*time)*pressure_amplitude
