@@ -3,23 +3,22 @@ using TestSetExtensions
 using IntensityMetrics
 using IntensityMetrics.Unitful
 
-# ultrasound parameters
-center_freq = 5e6u"Hz"
-pulse_duration = 10u"µs"
-pressure_amplitude = 1u"MPa"
+@testset "IntensityMetrics.jl" begin
+    @testset ExtendedTestSet "intensity tests" begin
+        f0 = 5e6u"Hz"
+        fs = 40e6u"Hz"
+        pulse_duration = 10u"µs"
+        dt = promote(1/fs, 1u"s")[1];
+        num_samples = ceil(pulse_duration/dt)
+        M = Medium();
+        E = Excitation();
 
-# waveform parameters
-sampling_freq = 40e6u"Hz"
-dt = promote(1/sampling_freq, 1u"s")[1]
-num_samples = ceil(pulse_duration/dt)
-time = collect(range(0, num_samples-1, step=1)) * dt
-data = sin.(2 * pi * center_freq * time) * pressure_amplitude
+        t = collect(range(0,num_samples-1; step=1) *dt)
+        data = sin.(2*pi*f0*t)u"MPa";
 
-# setup 
-M = Medium();
-E = Excitation(center_freq, pulse_duration, 1);
-W = Waveform(time, data, dt)
+        I = map(x->intensity(x, M), data)
+        sppa = intensity_sppa(data, M, E)
+        spta = intensity_spta(data, M, E)
+    end
 
-@testset ExtendedTestSet "intensity calculations" begin
-    @test intensity_sppa(W, M, E) ≈ 337837.837u"W/m^2" atol=0.001u"W/m^2"
 end
