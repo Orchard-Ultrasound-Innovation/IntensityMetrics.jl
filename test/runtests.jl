@@ -24,9 +24,9 @@ using IntensityMetrics.Unitful
     @test intensity(pressure_amplitude, M) ≈ intensity_expected atol=0.001u"W/m^2"
     @test intensity(uconvert(u"Pa", pressure_amplitude), M) ≈ intensity_expected atol=0.001u"W/m^2"   
 
-    # intensity_sppa tests
-    intensity_sppa_expected = uconvert(u"W/m^2", pressure_amplitude^2 / (2*M.density*M.c))
-    @test intensity_sppa(data, M, E) ≈ intensity_sppa_expected atol=0.001u"W/m^2"
+    # intensity_sppa tests. output is expected to be a vector
+    intensity_sppa_expected = uconvert(u"W/cm^2", pressure_amplitude^2 / (2*M.density*M.c))
+    @test intensity_sppa(data, M, E) ≈ [intensity_sppa_expected] atol=0.001u"W/cm^2"
 
     # mechanical_index tests
     mechanical_index_expected = ustrip(uconvert(u"MPa", pressure_amplitude) / sqrt(uconvert(u"MHz", center_freq)))
