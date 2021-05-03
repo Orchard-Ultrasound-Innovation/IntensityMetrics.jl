@@ -31,5 +31,5 @@ using IntensityMetrics.Unitful
     # mechanical_index tests
     mechanical_index_expected = ustrip(uconvert(u"MPa", pressure_amplitude) / sqrt(uconvert(u"MHz", center_freq)))
     @test mechanical_index(data, E) ≈ mechanical_index_expected atol=0.001
-    @test mechanical_index(uconvert(u"Pa", data), E) ≈ mechanical_index_expected atol=0.001
+    @test mechanical_index(uconvert.(u"Pa", data), E) ≈ mechanical_index_expected atol=0.001
 end

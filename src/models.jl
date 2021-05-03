@@ -1,7 +1,7 @@
 const W_per_cm2 = typeof(1.0u"W/cm^2")
 const kg_per_m3 = typeof(1.0u"kg/m^3")
 const m_per_s = typeof(1.0u"m" / 1.0u"s")
-const herz = typeof(1.0u"Hz")
+const hertz = typeof(1.0u"Hz")
 const seconds = typeof(1.0u"s")
 
 const PressureArray{x} = Array{T, x} where T <: Union{Unitful.Pressure, Number, W_per_cm2}
@@ -33,14 +33,15 @@ struct Excitation
     pulse_duration: On-time / duration of the excitation pulse in seconds.
         duty_cycle: [0, 1]
                 f0: Center frequency in Hz
+    total_duration: Total duration of waveform in seconds
 end
 """
 struct Excitation
-    f0::herz                # Center frequency in Hz
-    pulse_duration::seconds # seconds
-    duty_cycle::Float64     # [0,1]
-    total_duration::seconds
+    f0::hertz                   # Center frequency in Hz
+    pulse_duration::seconds     # seconds
+    duty_cycle::Float64         # [0,1]
+    total_duration::seconds     # seconds
 end
 
 Excitation() = Excitation(5e6u"Hz", 0.1u"s", 1.0, 10u"s")
-Excitation(f0, pd::Number, dc) = Excitation(f0, Float64(pd), dc, 10)
+Excitation(f0, pd::Number, dc) = Excitation(f0, Float64(pd), dc, 10u"s")
