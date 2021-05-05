@@ -5,20 +5,20 @@ using IntensityMetrics.Unitful
 
 @testset "perfect sinusoid" begin
     # ultrasound parameters
-    center_freq = 5e6u"Hz"
+    f0 = 5e6u"Hz"                           # center frequency
     pressure_amplitude = 1u"MPa"
     duty_cycle = 1.0
     pulse_duration = 10u"µs"
     total_duration = pulse_duration
-    sampling_freq_receive = 40e6u"Hz"
+    fs = 40e6u"Hz"                          # sampling frequency of received signal
     M = Medium();
-    E = Excitation(center_freq, pulse_duration, duty_cycle, total_duration, sampling_freq_receive);
+    E = Excitation(f0, pulse_duration, duty_cycle, total_duration, fs);
 
     # waveform parameters
-    dt = 1/sampling_freq_receive
+    dt = 1/fs
     num_samples = ceil(pulse_duration/dt)
     time = collect((0:num_samples-1)*dt)
-    data = sin.(2*pi*center_freq*time)*pressure_amplitude
+    data = sin.(2*pi*f0*time)*pressure_amplitude
     
     # intensity tests
     intensity_expected = uconvert(u"W/m^2", pressure_amplitude^2 / (M.density*M.c))
@@ -30,7 +30,7 @@ using IntensityMetrics.Unitful
     @test intensity_sppa(data, M, E) ≈ [intensity_sppa_expected] atol=0.001u"W/cm^2"
 
     # mechanical_index tests
-    mechanical_index_expected = ustrip(uconvert(u"MPa", pressure_amplitude) / sqrt(uconvert(u"MHz", center_freq)))
+    mechanical_index_expected = ustrip(uconvert(u"MPa", pressure_amplitude) / sqrt(uconvert(u"MHz", f0)))
     @test mechanical_index(data, E) ≈ mechanical_index_expected atol=0.001
     @test mechanical_index(uconvert.(u"Pa", data), E) ≈ mechanical_index_expected atol=0.001
 end

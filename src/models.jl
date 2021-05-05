@@ -41,8 +41,8 @@ struct Excitation
     pulse_duration::seconds     # seconds
     duty_cycle::Float64         # [0,1]
     total_duration::seconds     # seconds
-    sampling_frequency_receive::hertz
+    fs::hertz                   # Sampling frequency of the received signal in Hz
 end
 
 Excitation() = Excitation(5e6u"Hz", 0.1u"s", 1.0, 10.0u"s", 1.0u"Hz")
-Excitation(f0, pd::Number, dc) = Excitation(f0, Float64(pd), dc, 10u"s", 1.0u"Hz")
+Excitation(f0, pulse_duration::Number, duty_cycle) = Excitation(f0, Float64(pulse_duration), Float64(duty_cycle), 10u"s", 1.0u"Hz")
