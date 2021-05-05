@@ -18,7 +18,7 @@ Output unit is W/cm².
 """
 function intensity_sppa(pressure, medium, excitation)
     # account for sampling frequency by multiplying pressure values with dt
-    dt = 1/excitation.sampling_frequency_receive
+    dt = 1/excitation.fs
     intensities = mapreduce(
         p -> intensity(p, medium) * dt, +, pressure; dims=1
     ) 
